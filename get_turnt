@@ -1,0 +1,41 @@
+#! /bin/bash
+### BEGIN INIT INFO
+# Provides:          get_turnt
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start daemon at boot time
+# Description:       Enable service provided by daemon.
+### END INIT INFO
+
+# Record video ad 24 hours
+
+case "$1" in
+	start)
+		echo "Let's get rickity rickity rekkkkd"
+		touch /home/pi/start
+		# Used to swap files, now it just uses a timestamp
+		# If thre's a file that already exists, copy it to something else and make a new one
+		#if [ -f /home/pi/launch_footage.h264 ]; then 	
+		#	mv /home/pi/launch_footage.h264 "/home/pi/launch_footage$(date +"%Y_%m_%d_%I_%M_%p").h264"
+		#fi
+		raspivid -o "/home/pi/launch_footage$(date +"%Y_%m_%d_%I_%M_%p").h264" -sh 100 -t 86400000 &
+		;;
+	stop)
+		touch /home/pi/stop
+		killall raspivid
+		;;
+	reload)
+		touch /home/pi/reload
+		killall raspivid
+		raspivid -o "/home/pi/launch_footage$(date +"%Y_%m_%d_%I_%M_%p").h264" -sh 100 -t 86400000 &
+		;;
+	status)
+		echo "Wubba lubba dub dub"
+		;;
+	*)
+		echo "Usage: $0 {start|stop|status}"
+esac
+
+exit 0
